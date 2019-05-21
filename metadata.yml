@@ -1,0 +1,12 @@
+kind: app
+version: v1
+spec:
+  name: fieldbus
+  displayname: fieldbus hello world
+  description: >
+    An simple fieldbus app example
+  version: "0.1.0"
+  arch: armhf
+  category: protocol
+  attributes:
+    - openInSameTab

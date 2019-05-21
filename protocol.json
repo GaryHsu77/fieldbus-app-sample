@@ -1,0 +1,45 @@
+{
+    "protocol" : {
+        "serviceName" : "fieldbus",
+        "protocolName": "fieldbus",
+        "version": "0.0.1",
+        "hostName" : "fieldbus_app_1"
+    },
+    "setting" : {
+        "startCmds" : [
+            "killall fieldbusd",
+            "/usr/bin/fieldbusd"
+        ],
+        "stopCmds" : [
+            "killall fieldbus"
+        ],
+        "restartCmds" : [
+            "killall fieldbus",
+            "sleep 1",
+            "/usr/bin/fieldbusd"
+        ],
+        "masterConfigurationPath" : "/etc/fieldbusd"
+    },
+    "schema" : {
+        "device" : [
+            {"name" : "name"                ,"attribute" : "default-required" , "type" : "string" },
+            {"name" : "interface"           ,"attribute" : "default-required" , "type" : "string" },
+            {"name" : "templateName"        ,"attribute" : "default-required" , "type" : "string" },
+            {"name" : "ip"                  ,"attribute" : "protocol-required", "type" : "string" },
+            {"name" : "port"                ,"attribute" : "protocol-required", "type" : "int"    },
+            {"name" : "dev_id"              ,"attribute" : "protocol-required", "type" : "int"    }
+        ],
+        "tag" : [
+            {"name" : "id"                  , "attribute" : "default-required" , "type" : "string" },
+            {"name" : "op"                  , "attribute" : "default-required" , "type" : "string" },
+            {"name" : "type"                , "attribute" : "default-required" , "type" : "string" },
+            {"name" : "requestTimeoutMs"    , "attribute" : "default-required" , "type" : "int"    },
+            {"name" : "pollingPeriodMs"     , "attribute" : "default-required" , "type" : "int"    },
+            {"name" : "unit"                , "attribute" : "default-option"   , "type" : "string" },
+            {"name" : "interframeDelayMs"   , "attribute" : "default-option"   , "type" : "int"    },
+            {"name" : "function"            , "attribute" : "protocol-required", "type" : "string" },
+            {"name" : "address"             , "attribute" : "protocol-required", "type" : "int"    },
+            {"name" : "quantity"            , "attribute" : "protocol-required", "type" : "int"    }
+        ]
+    }
+}
