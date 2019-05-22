@@ -1,19 +1,21 @@
 ################################################################################
-# qemu
+# rootfs
 ################################################################################
-FROM arm32v7/debian:stretch as qemu
-RUN apt-get update && apt-get install qemu-user-static -y
-################################################################################
-# thingspro
-################################################################################
-FROM moxaisd/thingspro-dev-base:0.11.0-1-linux-arm AS thingspro
+FROM arm32v7/debian:stretch AS rootfs
+COPY debs .
+RUN apt-get update && apt-get install -y --fix-missing qemu-user-static libjansson-dev libconfig-dev libzmq3-dev libprotobuf-c1 libmosquitto-dev
+RUN dpkg -i --force-all ./libmxtagf-dev_1.4.8-1_armhf.deb
+RUN dpkg -i ./mxfieldbus_3.4.3-1_armhf.deb
+RUN dpkg -i ./mxfieldbus-controller_0.3.1-1_armhf.deb
 # =================================
-# apt install stage
+# target
 # =================================
 FROM arm32v7/debian:stretch
 
-COPY --from=qemu /usr/bin/qemu-arm-static /usr/bin/
-COPY --from=thingspro /usr/lib/arm-linux-gnueabihf/libprotobuf-c.so* \
+WORKDIR /usr/src/app
+
+COPY --from=rootfs /usr/bin/qemu-arm-static /usr/bin/
+COPY --from=rootfs /usr/lib/arm-linux-gnueabihf/libprotobuf-c.so* \
         /usr/lib/arm-linux-gnueabihf/libmosquitto* \
         /usr/lib/arm-linux-gnueabihf/libzmq.so* \
         /usr/lib/arm-linux-gnueabihf/libjansson.so* \
@@ -24,12 +26,9 @@ COPY --from=thingspro /usr/lib/arm-linux-gnueabihf/libprotobuf-c.so* \
         /usr/lib/arm-linux-gnueabihf/libsodium.so* \
         /usr/lib/arm-linux-gnueabihf/libpgm* \
         /usr/lib/arm-linux-gnueabihf/
-COPY --from=thingspro /usr/lib/libmxfb* \
+COPY --from=rootfs /usr/lib/libmxfb* \
         /usr/lib/
-COPY debs .
-RUN dpkg -i --force-all ./mxfieldbus-controller_0.3.1-1_armhf.deb
-
-WORKDIR /usr/src/app
+COPY --from=rootfs /usr/bin/fbcontroller /usr/bin/
 COPY protocol.json .
 COPY entrypoint.sh .
 CMD [ "/bin/bash", "./entrypoint.sh" ]
